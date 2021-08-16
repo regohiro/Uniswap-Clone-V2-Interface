@@ -15,7 +15,7 @@ interface UseAsync<Params, Response> extends State<Response> {
   call: (params: Params) => Promise<CallResponse<Response>>;
 }
 
-function useAsync<Params, Response>(
+export function useAsync<Params, Response>(
   req: (params: Params) => Promise<Response>
 ): UseAsync<Params, Response> {
   const [state, setState] = useState<State<Response>>({
@@ -58,5 +58,3 @@ function useAsync<Params, Response>(
     call,
   };
 }
-
-export default useAsync;
