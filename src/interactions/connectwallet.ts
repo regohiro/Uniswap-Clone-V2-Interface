@@ -4,7 +4,6 @@ import {
   networkId,
   web3Modal,
 } from "../connectors/network-config";
-import { getTokenInstance } from "../contracts";
 import { initialState, IState } from "../state/user/reducers";
 import { fromWei } from "../utils";
 
@@ -49,17 +48,13 @@ export const connectWallet = async (): Promise<IState> => {
 
   const signer = provider.getSigner();
   const address = await signer.getAddress();
-  const dat = await getTokenInstance(signer);
   const bnbBalance = fromWei(await signer.getBalance());
-  const datBalance = fromWei(await dat.balanceOf(address), 3);
 
   return {
     host,
     provider,
     signer,
     address,
-    bnbBalance,
-    datBalance,
     txHash: "",
   };
 };
