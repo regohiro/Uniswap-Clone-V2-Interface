@@ -1,10 +1,13 @@
 import { ERC20, ERC20__factory, Dex, Dex__factory } from "./abis/types";
 import { TSignerProvider } from "./../connectors";
 
+export type TokenType = "Dai" | "Link" | "Uni";
+
 export const daiAddr = "";
 export const linkAddr = "";
 export const uniAddr = "";
 export const dexAddr = "";
+
 
 const checkSigner = async (signerOrProvider: TSignerProvider) => {
   if (signerOrProvider.constructor.name === "JsonRpcSigner") {
@@ -19,7 +22,7 @@ const checkSigner = async (signerOrProvider: TSignerProvider) => {
 
 export const getTokenInstance = async (
   signerOrProvider: TSignerProvider,
-  token: "Dai" | "Link" | "Uni"
+  token: TokenType
 ): Promise<ERC20> => {
   await checkSigner(signerOrProvider);
   let tokenAddr;
