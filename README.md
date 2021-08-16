@@ -1,5 +1,7 @@
 ## Getting Started
 
+### Pre Requisites
+
 Download dependencies:
 
 ```bash
@@ -11,6 +13,8 @@ Build typechain files:
 yarn generate-types
 ```
 Note: requires json abi files at ./src/contracts/abis
+
+### Development
 
 Run the development server:
 
