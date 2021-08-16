@@ -1,28 +1,48 @@
-import { Presale, Presale__factory, Token, Token__factory } from './abis/types';
-import { TSignerProvider } from './../connectors';
+import { ERC20, ERC20__factory, Dex, Dex__factory } from "./abis/types";
+import { TSignerProvider } from "./../connectors";
 
-export const presaleAddr = "0xdB5eBA9f3fd31A18D8FBdE146750b0FA2be9354B";
-export const tokenAddr = "0x5a884042e50c2282d185CE9d844F5200f5597b42";
+export const daiAddr = "";
+export const linkAddr = "";
+export const uniAddr = "";
+export const dexAddr = "";
 
 const checkSigner = async (signerOrProvider: TSignerProvider) => {
-  if(signerOrProvider.constructor.name === "JsonRpcSigner"){
+  if (signerOrProvider.constructor.name === "JsonRpcSigner") {
     try {
       //@ts-ignore
       await signerOrProvider.getAddress();
     } catch (error) {
-      throw new Error("Connect Wallet!")
+      throw new Error("Connect Wallet!");
     }
   }
-}
+};
 
-export const getPresaleInstance = async (signerOrProvider: TSignerProvider): Promise<Presale> => {
+export const getTokenInstance = async (
+  signerOrProvider: TSignerProvider,
+  token: "Dai" | "Link" | "Uni"
+): Promise<ERC20> => {
   await checkSigner(signerOrProvider);
-  const contract = Presale__factory.connect(presaleAddr, signerOrProvider);
-  return contract;
-}
+  let tokenAddr;
+  switch (token) {
+    case "Dai":
+      tokenAddr = daiAddr;
+      break;
+    case "Link":
+      tokenAddr = linkAddr;
+      break;
+    case "Uni":
+      tokenAddr = uniAddr;
+      break;
+    default:
+      tokenAddr = "";
+      break;
+  }
+  return ERC20__factory.connect(daiAddr, signerOrProvider);
+};
 
-export const getTokenInstance = async (signerOrProvider: TSignerProvider): Promise<Token> => {
+export const getDexInstance = async (
+  signerOrProvider: TSignerProvider
+): Promise<Dex> => {
   await checkSigner(signerOrProvider);
-  const contract = Token__factory.connect(tokenAddr, signerOrProvider);
-  return contract;
-}
+  return Dex__factory.connect(dexAddr, signerOrProvider);
+};
