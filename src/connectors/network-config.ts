@@ -3,8 +3,9 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import Authereum from "authereum";
 import Torus from "@toruslabs/torus.js";
 
-export const networkId = 4;
+export const networkId = 42;
 
+//This RPC URL came from Metamask (nothing sensitive)
 export const defaultRPCURL =
   "https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161";
 
@@ -16,7 +17,7 @@ const providerOptions = {
     package: WalletConnectProvider,
     options: {
       rpc: {
-        4: defaultRPCURL,
+        42: defaultRPCURL,
       },
     },
   },
@@ -25,8 +26,8 @@ const providerOptions = {
     options: {
       networkParams: {
         host: defaultRPCURL,
-        chainId: 4,
-        networkId: 4,
+        chainId: 42,
+        networkId: 42,
       },
     },
   },
@@ -38,8 +39,7 @@ const providerOptions = {
 const getWeb3Modal = () => {
   if (typeof window !== "undefined") {
     return new Web3Modal({
-      network: "mainnet",
-      cacheProvider: true,
+      cacheProvider: false,
       providerOptions,
       theme: "dark",
     });
@@ -64,30 +64,17 @@ type TNetWorkData = {
 
 export const getNetworkData = (netId: number): TNetWorkData | undefined => {
   switch (netId) {
-    case 4: {
+    case 42: {
       return {
-        chainId: "0x4",
-        chainName: "Rinkeby",
+        chainId: "0x2A",
+        chainName: "Kovan",
         rpcUrls: [defaultRPCURL],
         nativeCurrency: {
           name: "Ether",
           symbol: "ETH",
           decimals: 18,
         },
-        blockExplorerUrls: ["https://rinkeby.etherscan.io"],
-      };
-    }
-    case 56: {
-      return {
-        chainId: "0x38",
-        chainName: "BSCMAINET",
-        rpcUrls: ["https://bsc-dataseed.binance.org"],
-        nativeCurrency: {
-          name: "BINANCE COIN",
-          symbol: "BNB",
-          decimals: 18,
-        },
-        blockExplorerUrls: ["https://bscscan.com"],
+        blockExplorerUrls: ["https://kovan.etherscan.io"],
       };
     }
     default:
