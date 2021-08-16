@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 
 export const toBN = (value: number): BigNumber => {
   const valueString = value.toLocaleString("fullwide", { useGrouping: false });
@@ -6,9 +6,9 @@ export const toBN = (value: number): BigNumber => {
   return valueBN;
 }
 
-export const toWei = (value: number, decimals: number = 18) => {
-  const valueWei = value * 10**decimals;
-  const valueWeiBN = toBN(valueWei);
+export const toWei = (value: number, decimals: number = 18): BigNumber => {
+  const valueString = value.toLocaleString("fullwide", { useGrouping: false });
+  const valueWeiBN = ethers.utils.parseUnits(valueString, decimals);
   return valueWeiBN;
 }
 
@@ -19,7 +19,7 @@ export const fromBN = (valueBN: BigNumber): number => {
 }
 
 export const fromWei = (valueWeiBN: BigNumber, decimals: number = 18): number => {
-  const valueWeiNumber = fromBN(valueWeiBN);
-  const valueNumber = valueWeiNumber / 10**decimals;
+  const valueString = ethers.utils.formatUnits(valueWeiBN, decimals);
+  const valueNumber = Number(valueString);
   return valueNumber;
 }
