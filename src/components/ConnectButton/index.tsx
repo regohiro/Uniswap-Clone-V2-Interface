@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Spinner } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -12,8 +12,12 @@ import * as userActions from "../../state/user/actions";
 
 const ConnectButton = () => {
   const { address, host } = useSelector(selectUser);
-  const { updateProvider, updateUserInfo, setTxHash } =
-    bindActionCreators(userActions, useDispatch());
+  const { updateProvider, updateUserInfo, setTxHash } = bindActionCreators(
+    userActions,
+    useDispatch()
+  );
+
+  const [isHovering, setHover] = useState<boolean>(false);
 
   const { pending, error, call } = useAsync(connectWallet);
 
@@ -26,18 +30,13 @@ const ConnectButton = () => {
       const { host, provider, signer, address } = data;
       updateProvider({ host, provider });
       updateUserInfo({ signer, address });
+      setHover(false)
     }
   };
 
   const onClickDisconnect = async () => {
     const data = await disconnectWallet(host);
-    const {
-      host: newHost,
-      provider,
-      signer,
-      address,
-      txHash,
-    } = data;
+    const { host: newHost, provider, signer, address, txHash } = data;
     updateProvider({ host: newHost, provider });
     updateUserInfo({ signer, address });
     setTxHash(txHash);
@@ -45,16 +44,30 @@ const ConnectButton = () => {
 
   return (
     <>
-      <Button color='yellow' onClick={onClickConnect} disabled={pending}>
+      <Button
+        variant="warning"
+        onClick={!address ? onClickConnect : onClickDisconnect}
+        onMouseOver={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        disabled={pending}
+        size="lg"
+        style={{ width: "160px" }}
+      >
         {pending ? (
-          "Connect Wallet"
-        ) : (
           <Spinner
-            as='span'
-            animation='border'
-            role='status'
-            aria-hidden='true'
+            as="span"
+            animation="border"
+            role="status"
+            aria-hidden="true"
           />
+        ) : address ? (
+          isHovering ? (
+            "Disconnect"
+          ) : (
+            "Connected"
+          )
+        ) : (
+          "Connet Wallet"
         )}
       </Button>
     </>

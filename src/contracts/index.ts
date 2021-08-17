@@ -3,11 +3,10 @@ import { TSignerProvider } from "./../connectors";
 
 export type TokenType = "Dai" | "Link" | "Uni";
 
-export const daiAddr = "";
-export const linkAddr = "";
-export const uniAddr = "";
-export const dexAddr = "";
-
+export const daiAddr = "0x3Dada1665B380182bCb2Fd0EC5350aa642E30CF2";
+export const linkAddr = "0xab3361E094463A9E27368854210fA2E32Fd09a23";
+export const uniAddr = "0x66D44e4481AE436Bb635b741aA9161C4381E315F";
+export const dexAddr = "0xeeE74B877F1d8ab44a631661A7e0E5b081B453e0";
 
 const checkSigner = async (signerOrProvider: TSignerProvider) => {
   if (signerOrProvider.constructor.name === "JsonRpcSigner") {
