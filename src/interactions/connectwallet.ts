@@ -1,11 +1,10 @@
-import { getProvider } from "./../connectors";
+import { getProvider } from "../connectors";
 import {
   getNetworkData,
   networkId,
   web3Modal,
 } from "../connectors/network-config";
 import { initialState, IState } from "../state/user/reducers";
-import { fromWei } from "../utils";
 
 const addNetwork = async (id: number): Promise<void> => {
   const data = getNetworkData(id);
@@ -48,7 +47,6 @@ export const connectWallet = async (): Promise<IState> => {
 
   const signer = provider.getSigner();
   const address = await signer.getAddress();
-  const bnbBalance = fromWei(await signer.getBalance());
 
   return {
     host,
