@@ -39,7 +39,7 @@ export const getTokenInstance = async (
       tokenAddr = "";
       break;
   }
-  return ERC20__factory.connect(daiAddr, signerOrProvider);
+  return ERC20__factory.connect(tokenAddr, signerOrProvider);
 };
 
 export const getDexInstance = async (
