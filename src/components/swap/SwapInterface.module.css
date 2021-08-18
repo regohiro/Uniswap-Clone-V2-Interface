@@ -25,11 +25,17 @@
   color: #fff;
   width: 27%;
   font-size: large;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .dropdownBtn {
   width: 27%;
   border-color: #2C2F36;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .dropdownMenu {
@@ -40,12 +46,14 @@
 
 .dropdownItem {
   margin: 5px 0;
-  padding-left: 30px;
+  padding-left: 20px;
 }
 
 .dropdownText{
   color: #fff;
   font-size: large;
+  display: flex;
+  align-items: center;
 }
 
 .dropdownItem:hover{
@@ -104,6 +112,10 @@
 .rateValue {
   padding-right: 30px;
   float: right;
+}
+
+.ethLogo {
+  margin-left: 10px;
 }
 
 .btn {

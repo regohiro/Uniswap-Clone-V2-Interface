@@ -1,19 +1,13 @@
 import React from "react";
 import { InputGroup } from "react-bootstrap";
-import styled from "styled-components";
 import styles from "./SwapInterface.module.css";
-
-const Img = styled.img`
-  width: 30px;
-  height: 30px;
-  margin-left: 10px;
-`;
+import Image from "next/image";
 
 const EthDropdown = (): JSX.Element => {
   return (
     <InputGroup.Text className={styles.inputGroupText}>
-      <Img src="./eth.png" alt="Eth" />
-      &nbsp;&nbsp;ETH
+      <Image src="/eth.png" alt="Eth" width={30} height={30}/>
+      <text>&nbsp;&nbsp;ETH</text>
     </InputGroup.Text>
   );
 };

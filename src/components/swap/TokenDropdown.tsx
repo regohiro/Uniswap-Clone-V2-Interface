@@ -3,12 +3,13 @@ import { Dropdown } from "react-bootstrap";
 import styled from "styled-components";
 import { TokenType } from "../../contracts";
 import styles from "./SwapInterface.module.css";
+import Image from "next/image";
 
-const Img = styled.img`
-  width: 30px;
-  height: 30px;
-  margin-left: -5px;
-`;
+// const Img = styled.img`
+//   width: 30px;
+//   height: 30px;
+//   margin-left: -5px;
+// `;
 
 const DefaultText: React.FC = () => {
   return (
@@ -19,11 +20,11 @@ const DefaultText: React.FC = () => {
 };
 
 const TokenText: React.FC<{ token: TokenType }> = ({ token }) => {
-  const imgUrl = `./${token.toLowerCase()}.png`;
+  const imgUrl = `/${token.toLowerCase()}.png`;
   return (
     <div className={styles.dropdownText}>
-      <Img src={imgUrl} alt={token} />
-      &nbsp;&nbsp;{token.toUpperCase()}
+      <Image src={imgUrl} alt={token} width={30} height={30}/>
+      <text>&nbsp;&nbsp;{token.toUpperCase()}</text>
     </div>
   );
 };
