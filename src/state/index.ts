@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import thunk from "redux-thunk";
 import user from "./user/reducers";
+import swap from "./swap/reducers";
 
 const store = configureStore({
   reducer: {
     user,
+    swap
   },
   middleware: [thunk],
 });
@@ -15,3 +17,4 @@ export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
 export const selectUser = (state: RootState) => state.user;
+export const selectSwap = (state: RootState) => state.swap;
