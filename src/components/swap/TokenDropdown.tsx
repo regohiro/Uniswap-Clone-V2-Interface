@@ -1,15 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dropdown } from "react-bootstrap";
-import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import { bindActionCreators } from "redux";
+import * as swapActions from "../../state/swap/actions";
+import { selectSwap } from "../../state";
 import { TokenType } from "../../contracts";
 import styles from "./SwapInterface.module.css";
 import Image from "next/image";
-
-// const Img = styled.img`
-//   width: 30px;
-//   height: 30px;
-//   margin-left: -5px;
-// `;
 
 const DefaultText: React.FC = () => {
   return (
@@ -23,23 +20,34 @@ const TokenText: React.FC<{ token: TokenType }> = ({ token }) => {
   const imgUrl = `/${token.toLowerCase()}.png`;
   return (
     <div className={styles.dropdownText}>
-      <Image src={imgUrl} alt={token} width={30} height={30}/>
-      <text>&nbsp;&nbsp;{token.toUpperCase()}</text>
+      <Image src={imgUrl} alt={token} width={30} height={30} />
+      &nbsp;&nbsp;{token.toUpperCase()}
     </div>
   );
 };
 
 const TokenDropdown = (): JSX.Element => {
+  const { tokenType } = useSelector(selectSwap)
+  const { setTokenType } = bindActionCreators(swapActions, useDispatch());
+
+  const tokens: Array<TokenType> = ["Dai", "Link", "Uni"];
+
   const [dropdownBtnText, setDropdownText] = useState<JSX.Element>(
     <DefaultText />
   );
 
-  const handleSelect = (e: string | null) => {
-    //@ts-ignore
-    setDropdownText(<TokenText token={e} />);
-  };
+  useEffect(() => {
+    if(tokenType !== undefined){
+      setDropdownText(<TokenText token={tokenType} />);
+    }
+  }, [])
 
-  const tokens: Array<TokenType> = ["Dai", "Link", "Uni"];
+  const handleSelect = (e: string | null): void => {
+    if(e === "Dai" || e === "Link" || e === "Uni"){
+      setDropdownText(<TokenText token={e} />);
+      setTokenType(e);
+    }
+  };
 
   return (
     <Dropdown onSelect={handleSelect}>
@@ -53,8 +61,12 @@ const TokenDropdown = (): JSX.Element => {
 
       <Dropdown.Menu className={styles.dropdownMenu}>
         {tokens.map((token) => (
-          <Dropdown.Item eventKey={token} id={token} className={styles.dropdownItem}>
-            <TokenText token={token}/>
+          <Dropdown.Item
+            eventKey={token}
+            id={token}
+            className={styles.dropdownItem}
+          >
+            <TokenText token={token} />
           </Dropdown.Item>
         ))}
       </Dropdown.Menu>
