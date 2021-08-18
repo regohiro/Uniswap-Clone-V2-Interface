@@ -1,10 +1,11 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { setAmount, setOrder } from "./actions";
+import { TokenType } from "../../contracts";
+import { setAmount, setSwapDirection, setTokenType, setValue } from "./actions";
 
 export type TSwapDirection = "BuyToken" | "SellToken";
 interface IState {
   swapDirection: TSwapDirection;
-  tokenType: undefined;
+  tokenType: TokenType | undefined;
   value: number;
   amount: number;
 }
@@ -18,16 +19,28 @@ const initialState: IState = {
 
 export default createReducer<IState>(initialState, (builder) => {
   builder
-    .addCase(setOrder, (state, { payload }) => {
+    .addCase(setSwapDirection, (state, { payload: swapDirection }) => {
       return {
         ...state,
-        payload
+        swapDirection
       }
     })
-    .addCase(setAmount, (state, { payload }) => {
+    .addCase(setTokenType, (state, { payload: tokenType }) => {
       return {
         ...state,
-        payload
+        tokenType
+      }
+    })
+    .addCase(setValue, (state, { payload: value }) => {
+      return {
+        ...state,
+        value
+      }
+    })
+    .addCase(setAmount, (state, { payload: amount }) => {
+      return {
+        ...state,
+        amount
       }
     });
 });
