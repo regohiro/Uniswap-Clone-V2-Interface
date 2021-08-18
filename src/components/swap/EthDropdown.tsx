@@ -7,7 +7,7 @@ const EthDropdown = (): JSX.Element => {
   return (
     <InputGroup.Text className={styles.inputGroupText}>
       <Image src="/eth.png" alt="Eth" width={30} height={30}/>
-      <text>&nbsp;&nbsp;ETH</text>
+      &nbsp;&nbsp;ETH
     </InputGroup.Text>
   );
 };
