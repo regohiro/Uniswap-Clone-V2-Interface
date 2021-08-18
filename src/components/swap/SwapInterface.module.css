@@ -1,0 +1,89 @@
+.main {
+  margin: 0 auto;
+  margin-top: 150px;
+  border-radius: 50px;
+  height: 350px;
+  width: 500px;
+  background-color: #191b1f;
+  position: relative;
+}
+
+.box {
+  position: absolute;
+  top: 30px;
+  width: 100%;
+}
+
+.inputGroup{
+  width: 90%;
+  margin: 0px auto;
+}
+
+.inputGroupText {
+  background-color: #191B1F;
+  border-color: #2C2F36;
+  color: #fff;
+  width: 27%;
+  font-size: large;
+}
+
+.dropdownBtn {
+  width: 27%;
+  border-color: #2C2F36;
+}
+
+.dropdownMenu {
+  padding: 0;
+  min-width: 125px !important;
+  background-color: #191B2F;
+}
+
+.dropdownItem {
+  margin: 5px 0;
+  padding-left: 30px;
+}
+
+.dropdownText{
+  color: #fff;
+  font-size: large;
+}
+
+.dropdownItem:hover{
+  background-color: #2D212E;
+}
+
+.formControl {
+  background-color: #212429;
+  border-color: #2C2F36;
+  border-width: 2px;
+  height: 70px;
+  border-radius: 15px;
+  font-size: x-large;
+}
+
+#topFormControl {
+  background-color: #212429; 
+  color: #fff
+}
+
+#bottomFormControl {
+  background-color: #212429; 
+  color: #fff
+}
+
+#bottomFormControl:hover{
+  cursor: not-allowed;
+}
+
+.btn {
+  position: absolute;
+  width: 90%;
+  height: 50px;
+  background-color: #172A42;
+  color: #6DA8FF;
+  margin: 0px auto;
+  bottom: -75px;
+  left: 50%;
+  margin-left: -45%;
+  border-radius: 15px;
+}
