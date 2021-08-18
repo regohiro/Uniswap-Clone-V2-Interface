@@ -5,9 +5,6 @@ import styles from "./SwapInterface.module.css";
 import TokenDropdown from "./TokenDropdown";
 
 const SwapInterface = (): JSX.Element => {
-
-  
-
   return (
     <main className={styles.main}>
       <Form className={styles.box}>
@@ -21,13 +18,10 @@ const SwapInterface = (): JSX.Element => {
           />
           <EthDropdown />
         </InputGroup>
-        <div id="arrow-box">
+        <div className={styles.arrowBox}>
           <h2>↓</h2>
         </div>
-        <InputGroup
-          className={styles.inputGroup}
-          id={styles.bottom}
-        >
+        <InputGroup className={styles.inputGroup} id={styles.bottom}>
           <Form.Control
             className={styles.formControl}
             id={styles.bottomFormControl}
@@ -37,7 +31,10 @@ const SwapInterface = (): JSX.Element => {
           />
           <TokenDropdown />
         </InputGroup>
-        
+        <div className={styles.rateBox}>
+          <span className={styles.rateText}>Exchange Rate</span>
+          <span className={styles.rateValue}>1 ETH = 1000 DAI</span>
+        </div>
         <Button
           variant="primary"
           type="submit"

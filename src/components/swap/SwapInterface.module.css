@@ -75,6 +75,37 @@
   cursor: not-allowed;
 }
 
+.arrowBox {
+  width: 100%;
+  display: flex;
+  justify-content: center; 
+}
+
+.arrowBox h2{
+  margin: 2px 0px; 
+}
+
+.arrowBox h2:hover{
+  cursor: pointer;
+}
+
+.rateBox {
+  width: 100%;
+  height: 20px;
+  margin-top: 20px;
+  color: #788089;
+}
+
+.rateText {
+  padding-left: 30px;
+  float: left;
+}
+
+.rateValue {
+  padding-right: 30px;
+  float: right;
+}
+
 .btn {
   position: absolute;
   width: 90%;
@@ -86,4 +117,9 @@
   left: 50%;
   margin-left: -45%;
   border-radius: 15px;
+}
+
+.btn:hover {
+  background-color: #192A40;
+  color: #6DA8FF;
 }
