@@ -1,12 +1,11 @@
 import Head from "next/head";
-import { useSelector } from "react-redux";
-import { selectUser } from "../src/state";
 import SwapInterface from "../src/components/swap/SwapInterface";
+import Footer from "../src/components/Footer";
 import styles from "../styles/Home.module.css";
+import AlertModal from "../src/components/popups/AlertModal";
+import SuccessModal from "../src/components/popups/SuccessModal";
 
 const Home: React.FC = () => {
-  const { address } = useSelector(selectUser);
-
   return (
     <>
       <Head>
@@ -16,11 +15,10 @@ const Home: React.FC = () => {
       </Head>
 
       <main className={styles.main}>
+        <AlertModal/>
+        <SuccessModal/>
         <SwapInterface />
-        <footer className={styles.footer}>
-          <span id={styles.creator}>Made by REGO350</span>
-          <span id={styles.address}>{address}</span>
-        </footer>
+        <Footer/>
       </main>
     </>
   );
