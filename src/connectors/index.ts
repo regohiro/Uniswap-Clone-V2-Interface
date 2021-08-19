@@ -6,7 +6,7 @@ export type TSignerProvider = JsonRpcSigner | TProvider;
 
 export const getProvider = (host: any): Web3Provider => {
   const provider = new Web3Provider(host);
-  provider.pollingInterval = 12000;
+  provider.pollingInterval = 15000;
   return provider;
 }
 

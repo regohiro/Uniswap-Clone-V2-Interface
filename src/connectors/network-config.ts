@@ -19,6 +19,9 @@ const providerOptions = {
       rpc: {
         42: defaultRPCURL,
       },
+      pollingInterval: 15000,
+      qrcode: true,
+      supportedChainIds: [42]
     },
   },
   torus: {
