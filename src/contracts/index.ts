@@ -35,9 +35,6 @@ export const getTokenInstance = async (
     case "Uni":
       tokenAddr = uniAddr;
       break;
-    default:
-      tokenAddr = "";
-      break;
   }
   return ERC20__factory.connect(tokenAddr, signerOrProvider);
 };
