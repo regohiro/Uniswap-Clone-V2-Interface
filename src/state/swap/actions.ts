@@ -6,3 +6,4 @@ export const setSwapDirection = createAction<TSwapDirection>("swap/setSwapDirect
 export const setTokenType = createAction<TokenType | undefined>("swap/setTokenType");
 export const setValue = createAction<number>("swap/setValue");
 export const setAmount = createAction<number>("swap/setAmount");
+export const setApproved = createAction<boolean>("swap/setApproved");

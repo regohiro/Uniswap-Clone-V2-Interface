@@ -1,6 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { TokenType } from "../../contracts";
-import { setAmount, setSwapDirection, setTokenType, setValue } from "./actions";
+import { setAmount, setApproved, setSwapDirection, setTokenType, setValue } from "./actions";
 
 export type TSwapDirection = "BuyToken" | "SellToken";
 interface IState {
@@ -8,13 +8,15 @@ interface IState {
   tokenType: TokenType | undefined;
   value: number;
   amount: number;
+  approved: boolean;
 }
 
 const initialState: IState = {
   swapDirection: "BuyToken",
   tokenType: undefined,
   value: 0,
-  amount: 0
+  amount: 0,
+  approved: false
 }
 
 export default createReducer<IState>(initialState, (builder) => {
@@ -42,5 +44,11 @@ export default createReducer<IState>(initialState, (builder) => {
         ...state,
         amount
       }
-    });
+    })
+    .addCase(setApproved, (state, { payload: approved }) => {
+      return {
+        ...state,
+        approved
+      }
+    }); 
 });
