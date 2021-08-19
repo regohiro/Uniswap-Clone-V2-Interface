@@ -1,4 +1,4 @@
-import { getProvider } from "../connectors";
+import { getProvider, TSignerProvider } from "../connectors";
 import {
   getNetworkData,
   networkId,
@@ -65,4 +65,15 @@ export const disconnectWallet = async (
   } catch (error) {}
 
   return initialState;
+};
+
+export const checkSigner = async (signerOrProvider: TSignerProvider) => {
+  if (signerOrProvider.constructor.name === "JsonRpcSigner") {
+    try {
+      //@ts-ignore
+      await signerOrProvider.getAddress();
+    } catch (error) {
+      throw new Error("Connect Wallet!");
+    }
+  }
 };
