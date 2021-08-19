@@ -14,7 +14,7 @@ const MainNavigation: React.FC = () => {
         />
       </Head>
       <header className={styles.header}>
-        <h1 className={styles.logo}>Block Swap</h1>
+        <h1 className={styles.logo}>Block Swap &nbsp; V2</h1>
         <nav className={styles.nav}>
           <ul>
             <li>
