@@ -5,6 +5,7 @@ import { bindActionCreators } from "redux";
 import * as userActions from "../../state/user/actions";
 import { disconnectWallet } from '../../interactions/connectwallet';
 import { networkId } from '../../connectors/network-config';
+import { fromHex } from '../../utils';
 
 const EventListener = (): JSX.Element => {
   const { host, provider, address } = useSelector(selectUser);
@@ -25,7 +26,6 @@ const EventListener = (): JSX.Element => {
     };
 
     const handleAccountChange = (accounts: string[]) => {
-      console.log(`Account changed: ${accounts}`)
       if(accounts){
         const signer = provider.getSigner();
         const address = accounts[0];
@@ -36,8 +36,7 @@ const EventListener = (): JSX.Element => {
     };
 
     const handleChainChange = (chainId: number) => {
-      console.log(`Network changed: ${chainId}`)
-      if(chainId !== networkId){
+      if(fromHex(chainId) !== networkId){
         resetAccount();
       }
     }
@@ -60,4 +59,3 @@ const EventListener = (): JSX.Element => {
 }
  
 export default EventListener
-   

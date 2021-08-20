@@ -143,7 +143,7 @@ const SwapInterface = (): JSX.Element => {
         setAlertModal({
           active: true,
           title: "Connection Error!",
-          message: error.message,
+          message: error.message || "Refused to connect",
         });
       }
       if (data) {

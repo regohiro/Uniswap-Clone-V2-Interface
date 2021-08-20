@@ -9,11 +9,12 @@ import {
 } from "../../interactions/connectwallet";
 import { selectUser } from "../../state";
 import * as userActions from "../../state/user/actions";
+import * as popupActions from "../../state/popup/actions";
 
 const ConnectButton = () => {
   const { address, host } = useSelector(selectUser);
-  const { updateProvider, updateUserInfo, setTxHash } = bindActionCreators(
-    userActions,
+  const { updateProvider, updateUserInfo, setTxHash, setAlertModal } = bindActionCreators(
+    {...userActions, ...popupActions},
     useDispatch()
   );
 
@@ -24,7 +25,11 @@ const ConnectButton = () => {
   const onClickConnect = async () => {
     const { error, data } = await call(null);
     if (error) {
-      console.error(error);
+      setAlertModal({
+        active: true,
+        title: "Connection Error!",
+        message: error.message || "Refused to connect",
+      });
     }
     if (data) {
       const { host, provider, signer, address } = data;

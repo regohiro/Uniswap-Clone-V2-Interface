@@ -1,2 +1,2 @@
 export * from "./bigNumber";
-// export * from "./formatTime";
+export * from "./hexNumber";
