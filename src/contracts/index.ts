@@ -25,18 +25,7 @@ export const getTokenInstance = async (
   token: TokenType
 ): Promise<ERC20> => {
   await checkSigner(signerOrProvider);
-  let tokenAddr;
-  switch (token) {
-    case "Dai":
-      tokenAddr = daiAddr;
-      break;
-    case "Link":
-      tokenAddr = linkAddr;
-      break;
-    case "Uni":
-      tokenAddr = uniAddr;
-      break;
-  }
+  const tokenAddr = getTokenAddr(token);
   return ERC20__factory.connect(tokenAddr, signerOrProvider);
 };
 
