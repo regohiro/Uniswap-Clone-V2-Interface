@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, FormControl, InputGroup } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -13,6 +13,7 @@ import TokenDropdown from "./TokenDropdown";
 import {
   approveToken,
   getAmount,
+  getPrice,
   hasApprovedToken,
   hasEnoughBalance,
   swapToken,
@@ -197,6 +198,17 @@ const SwapInterface = (): JSX.Element => {
       setAmount(0);
     }
   }, [value, tokenType, address]);
+
+
+  useAsyncEffect(async () => {
+    const tokens: Array<TokenType> = ["Dai", "Link", "Uni"];
+    for(let token of tokens){
+      const price = await getPrice(token);
+      if(address){
+        const hasEnoughFund = await hasEnoughBalance(address)
+      }
+    }
+  },[address]);
 
   return (
     <main className={styles.main}>

@@ -12,15 +12,22 @@ import {
 import { TSwapDirection } from "../state/swap/reducers";
 import { fromWei, tenPow18, toWei } from "../utils";
 
+export const getPrice = async (
+  tokenType: TokenType,
+): Promise<BigNumber> => {
+  const provider = getDefaultProvider();
+  const dex = await getDexInstance(provider);
+  const tokenAddr = getTokenAddr(tokenType);
+  const priceBN = await dex.getPrice(tokenAddr);
+  return priceBN;
+};
+
 export const getAmount = async (
   tokenType: TokenType,
   swapDirection: TSwapDirection,
   value: number
 ): Promise<number> => {
-  const provider = getDefaultProvider();
-  const dex = await getDexInstance(provider);
-  const tokenAddr = getTokenAddr(tokenType);
-  const priceBN = await dex.getPrice(tokenAddr);
+  const priceBN = await getPrice(tokenType);
 
   switch (swapDirection) {
     case "BuyToken":
