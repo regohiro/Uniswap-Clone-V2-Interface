@@ -23,6 +23,7 @@ import { JsonRpcSigner } from "@ethersproject/providers";
 import { TokenType } from "../../contracts";
 import { TSwapDirection } from "../../state/swap/reducers";
 import SwapButton from "../SwapButton";
+import RateBox from "./RateBox";
 
 const SwapInterface = (): JSX.Element => {
   const { address, signer } = useSelector(selectUser);
@@ -233,11 +234,7 @@ const SwapInterface = (): JSX.Element => {
           />
           {swapDirection === "BuyToken" ? <TokenDropdown /> : <EthDropdown />}
         </InputGroup>
-        <div className={styles.rateBox}>
-          <span className={styles.rateText}>Exchange Rate</span>
-          <span className={styles.rateValue}>1 ETH = 1000 DAI</span>
-        </div>
-
+        <RateBox />
         <SwapButton
           connectPending={connectPromi.pending}
           swapPending={swapPromi.pending}
