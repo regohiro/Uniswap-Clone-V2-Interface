@@ -91,8 +91,10 @@ export const swapToken = async (
     switch (swapDirection) {
       case "BuyToken":
         swapTx = await dex.buyToken(tokenAddr, { value: valueWei });
+        break;
       case "SellToken":
         swapTx = await dex.sellToken(tokenAddr, valueWei);
+        break;
     }
     const { transactionHash: txHash } = await swapTx.wait();
     
