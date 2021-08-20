@@ -15,8 +15,6 @@ const EventListener = (): JSX.Element => {
   );
 
   useEffect(() => {
-    if(!address) return;
-
     const resetAccount = async () => {
       const data = await disconnectWallet(host);
       const { host: newHost, provider, signer, address, txHash } = data;
@@ -40,10 +38,15 @@ const EventListener = (): JSX.Element => {
         resetAccount();
       }
     }
-
-    host.on("accountsChanged", handleAccountChange);
-    host.on("chainChanged", handleChainChange);
-    host.on("disconnect", resetAccount);
+ 
+    if(!address){ 
+      resetAccount();
+      return;
+    }else{
+      host.on("accountsChanged", handleAccountChange);
+      host.on("chainChanged", handleChainChange);
+      host.on("disconnect", resetAccount);
+    }
 
     return () => {
       host.removeListener("accountsChanged", handleAccountChange)
