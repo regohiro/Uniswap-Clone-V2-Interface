@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectSwap } from "../../state";
 
-const RateBox: React.FC = () => {
+const RateBox = (): JSX.Element => {
   const { swapDirection, value, amount, tokenType } = useSelector(selectSwap);
 
   const [fromTokenName, setFromTokenName] = useState<string>("ETH");
