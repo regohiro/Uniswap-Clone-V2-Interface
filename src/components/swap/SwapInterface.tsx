@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Form, FormControl, InputGroup } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -17,7 +17,7 @@ import {
   hasEnoughBalance,
   swapToken,
 } from "../../interactions/swap";
-import { useAsync } from "../../hooks";
+import { useAsync, usePrevious } from "../../hooks";
 import { connectWallet } from "../../interactions/connectwallet";
 import { JsonRpcSigner } from "@ethersproject/providers";
 import { TokenType } from "../../contracts";
@@ -44,7 +44,8 @@ const SwapInterface = (): JSX.Element => {
   );
 
   const [hasEnoughFund, setHasEnoughFund] = useState<boolean>(false);
-  const [inputValue, setInputValue] = useState<number | undefined>(undefined);
+  const [inputValue, setInputValue] = useState<number | undefined>(value || undefined);
+  const prevSwapDirection = usePrevious<TSwapDirection>(swapDirection);
 
   interface ISwapTokenParam {
     signer: JsonRpcSigner;
@@ -69,8 +70,14 @@ const SwapInterface = (): JSX.Element => {
   const onInputChange = (
     e: React.ChangeEvent<typeof FormControl & HTMLInputElement>
   ) => {
-    setValue(Number(e.target.value));
-    setInputValue(undefined);
+    const inputValueNumber = Number(e.target.value);
+    if (inputValueNumber >= 0) {
+      setValue(inputValueNumber);
+      setInputValue(undefined);
+    } else {
+      setValue(0);
+      setInputValue(undefined);
+    }
   };
 
   const onClickSwitchDirection = (): void => {
@@ -81,7 +88,6 @@ const SwapInterface = (): JSX.Element => {
 
   const onClickSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (address && tokenType && (swapDirection === "BuyToken" || approved)) {
       const { error, data } = await swapPromi.call({
         signer,
@@ -130,6 +136,7 @@ const SwapInterface = (): JSX.Element => {
           txHash: data,
           message: "Approve Successful",
         });
+        setApproved(true);
       }
     } else if (!address) {
       const { error, data } = await connectPromi.call(null);
@@ -150,11 +157,11 @@ const SwapInterface = (): JSX.Element => {
   };
 
   useEffect(() => {
-    if (amount) {
+    if (amount && prevSwapDirection !== swapDirection) {
       setInputValue(amount);
       setValue(amount);
       setAmount(value);
-    }
+    }  
   }, [swapDirection]);
 
   useAsyncEffect(async () => {
@@ -200,15 +207,15 @@ const SwapInterface = (): JSX.Element => {
           <Form.Control
             className={styles.formControl}
             id={styles.topFormControl}
-            type="text"
-            pattern="^[0-9]*[.,]?[0-9]*$"
-            min={0}
-            minLength={1}
-            maxLength={79}
-            spellCheck="false"
+            type="tel"
+            min="0"
+            placeholder="0.00"
+            step="any"
             onChange={onInputChange}
             value={inputValue}
             required={address ? true : false}
+            autoComplete="off"
+            autoCorrect="off"
           />
           {swapDirection === "BuyToken" ? <EthDropdown /> : <TokenDropdown />}
         </InputGroup>
