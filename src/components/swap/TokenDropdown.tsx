@@ -63,7 +63,7 @@ const TokenDropdown = (): JSX.Element => {
         {tokens.map((token) => (
           <Dropdown.Item
             eventKey={token}
-            id={token}
+            key={token}
             className={styles.dropdownItem}
           >
             <TokenText token={token} />
