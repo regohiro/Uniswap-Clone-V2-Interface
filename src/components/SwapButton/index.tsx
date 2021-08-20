@@ -28,7 +28,8 @@ const SwapButton: React.FC<IProps> = ({
         connectPending ||
         swapPending ||
         approvePending ||
-        (address !== "" && !hasEnoughFund)
+        (address !== "" && !hasEnoughFund) ||
+        (address !== "" && value === 0)
       }
       className={styles.btn}
     >
