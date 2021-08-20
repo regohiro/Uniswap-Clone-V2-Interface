@@ -37,8 +37,11 @@ const SwapInterface = (): JSX.Element => {
     updateProvider,
     updateUserInfo,
     setAlertModal,
-    setSuccessModal
-  } = bindActionCreators({ ...swapActions, ...userActions, ...popupActions }, useDispatch());
+    setSuccessModal,
+  } = bindActionCreators(
+    { ...swapActions, ...userActions, ...popupActions },
+    useDispatch()
+  );
 
   const [hasEnoughFund, setHasEnoughFund] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<number | undefined>(undefined);
@@ -89,14 +92,18 @@ const SwapInterface = (): JSX.Element => {
       if (error) {
         console.error(error);
         setAlertModal({
-          active: true, title: "Transaction Error!", message: error.message
-        })
+          active: true,
+          title: "Transaction Error!",
+          message: error.message,
+        });
       }
       if (data) {
         setTxHash(data);
         setSuccessModal({
-          active: true, txHash: data, message: "Swap Successful"
-        })
+          active: true,
+          txHash: data,
+          message: "Swap Successful",
+        });
       }
     } else if (
       address &&
@@ -111,24 +118,30 @@ const SwapInterface = (): JSX.Element => {
       if (error) {
         console.error(error);
         setAlertModal({
-          active: true, title: "Transaction Error!", message: error.message
-        })
+          active: true,
+          title: "Transaction Error!",
+          message: error.message,
+        });
       }
       if (data) {
         setTxHash(data);
         setSuccessModal({
-          active: true, txHash: data, message: "Approve Successful"
-        })
+          active: true,
+          txHash: data,
+          message: "Approve Successful",
+        });
       }
     } else if (!address) {
       const { error, data } = await connectPromi.call(null);
       if (error) {
         console.error(error);
         setAlertModal({
-          active: true, title: "Connection Error!", message: error.message
-        }) 
+          active: true,
+          title: "Connection Error!",
+          message: error.message,
+        });
       }
-      if (data) { 
+      if (data) {
         const { host, provider, signer, address } = data;
         updateProvider({ host, provider });
         updateUserInfo({ signer, address });
@@ -187,10 +200,12 @@ const SwapInterface = (): JSX.Element => {
           <Form.Control
             className={styles.formControl}
             id={styles.topFormControl}
-            type="number"
-            min="0"
-            placeholder="0.00"
-            step="any"
+            type="text"
+            pattern="^[0-9]*[.,]?[0-9]*$"
+            min={0}
+            minLength={1}
+            maxLength={79}
+            spellCheck="false"
             onChange={onInputChange}
             value={inputValue}
             required={address ? true : false}
