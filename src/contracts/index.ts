@@ -1,5 +1,5 @@
 import { ERC20, ERC20__factory, Dex, Dex__factory } from "./abis/types";
-import { TSignerProvider } from "./../connectors";
+import { TSignerProvider } from "../connectors";
 import { checkSigner } from "../interactions/connectwallet";
 
 export type TokenType = "Dai" | "Link" | "Uni";
