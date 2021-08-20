@@ -97,7 +97,6 @@ const SwapInterface = (): JSX.Element => {
         value,
       });
       if (error) {
-        console.error(error);
         setAlertModal({
           active: true,
           title: "Transaction Error!",
@@ -123,7 +122,6 @@ const SwapInterface = (): JSX.Element => {
         tokenType,
       });
       if (error) {
-        console.error(error);
         setAlertModal({
           active: true,
           title: "Transaction Error!",
@@ -142,7 +140,6 @@ const SwapInterface = (): JSX.Element => {
     } else if (!address) {
       const { error, data } = await connectPromi.call(null);
       if (error) {
-        console.error(error);
         setAlertModal({
           active: true,
           title: "Connection Error!",
