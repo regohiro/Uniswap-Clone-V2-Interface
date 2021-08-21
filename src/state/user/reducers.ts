@@ -14,7 +14,7 @@ export interface IState {
   provider: TProvider;
   signer: JsonRpcSigner;
   address: string;
-  balance: BigNumber
+  balance: BigNumber | undefined;
   txHash: string;
 }
 
@@ -23,7 +23,7 @@ export const initialState: IState = {
   provider: defaultProvider,
   signer: defaultSigner,
   address: "",
-  balance: toBN(0),
+  balance: undefined,
   txHash: "",
 };
 

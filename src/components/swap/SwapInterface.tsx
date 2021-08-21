@@ -23,8 +23,7 @@ import { TokenType } from "../../contracts";
 import { TSwapDirection } from "../../state/swap/reducers";
 import SwapButton from "../SwapButton";
 import RateBox from "./RateBox";
-import { toBN, toWei } from "../../utils";
-import { WheelEventHandler } from "hoist-non-react-statics/node_modules/@types/react";
+import { toWei } from "../../utils";
 
 const SwapInterface = (): JSX.Element => {
   const { address, signer, balance } = useSelector(selectUser);
@@ -78,7 +77,7 @@ const SwapInterface = (): JSX.Element => {
     e: React.ChangeEvent<typeof FormControl & HTMLInputElement>
   ) => {
     const inputValueNumber = Number(e.target.value);
-    if (inputValueNumber > 0) {
+    if (inputValueNumber >= 0 && e.target.value) {
       setValue(inputValueNumber);
       setInputValue(inputValueNumber.toString());
     } else {
@@ -174,7 +173,7 @@ const SwapInterface = (): JSX.Element => {
         updateTokenState({ [token]: { balance, allowance } });
       }
     }
-    if (address) {
+    if (address && !balance) {
       const { balance } = await getBalanceAllownace(address, "Eth");
       updateBalance(balance);
     }
@@ -188,7 +187,7 @@ const SwapInterface = (): JSX.Element => {
         [token]: { balance: undefined, allowance: undefined },
       });
     }
-    updateBalance(toBN(0));
+    updateBalance(undefined);
     if (address && tokenType) {
       await reloadTokens([tokenType]);
     }
@@ -214,7 +213,7 @@ const SwapInterface = (): JSX.Element => {
       );
       setAmount(amount);
 
-      if (address) {
+      if (address && balance) {
         let balanceCheck: boolean;
         switch (swapDirection) {
           case "BuyToken":

@@ -13,5 +13,5 @@ export const updateUserInfo = createAction<{
   address: string;
 }>("user/updateUserInfo");
 
-export const updateBalance = createAction<BigNumber>("user/updateBalance");
+export const updateBalance = createAction<BigNumber | undefined>("user/updateBalance");
 export const setTxHash = createAction<string>("user/setTxHash");
