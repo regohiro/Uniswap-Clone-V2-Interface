@@ -4,7 +4,6 @@ import { TokenType } from "../../contracts";
 import { toBN } from "../../utils";
 import {
   setAmount,
-  setApproved,
   setSwapDirection,
   setTokenType,
   setValue,
@@ -14,9 +13,9 @@ import {
 export type TSwapDirection = "BuyToken" | "SellToken";
 
 export interface ITokenState {
-  hasEnoughFund: boolean;
-  approved: boolean;
-  price: BigNumber;
+  balance?: BigNumber;
+  allowance?: BigNumber;
+  price?: BigNumber;
 }
 
 interface IState {
@@ -24,14 +23,13 @@ interface IState {
   tokenType: TokenType | undefined;
   value: number;
   amount: number;
-  approved: boolean;
   tokensState: Record<TokenType, ITokenState>;
 }
 
 const initialTokenState: ITokenState = {
-  hasEnoughFund: false,
-  approved: false,
-  price: toBN(0),
+  balance: undefined,
+  allowance: undefined,
+  price: undefined,
 };
 
 const initialState: IState = {
@@ -39,7 +37,6 @@ const initialState: IState = {
   tokenType: undefined,
   value: 0,
   amount: 0,
-  approved: false,
   tokensState: {
     Dai: initialTokenState,
     Link: initialTokenState,
@@ -73,16 +70,24 @@ export default createReducer<IState>(initialState, (builder) => {
         amount,
       };
     })
-    .addCase(setApproved, (state, { payload: approved }) => {
-      return {
-        ...state,
-        approved,
-      };
-    })
     .addCase(updateTokenState, (state, { payload }) => {
-      const tokensState = {
-        ...state.tokensState, ...payload
-      }
+      let tokensState: Record<TokenType, ITokenState> = state.tokensState;
+
+      Object.entries(payload).forEach(
+        ([key, value]) => {
+          //@ts-ignore
+          const tokenState: ITokenState = tokensState[key];
+          const mergedState: ITokenState = {
+            ...tokenState, ...value
+          }
+          tokensState = {
+            ...tokensState, ... {
+              [key]: mergedState
+            }
+          }
+        }
+      )
+
       return {
         ...state,
         tokensState,
