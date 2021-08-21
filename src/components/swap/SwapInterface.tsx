@@ -73,12 +73,12 @@ const SwapInterface = (): JSX.Element => {
   const approvePromi = useAsync<IApproveTokenParam, string>(
     async ({ signer, tokenType }) => await approveToken(signer, tokenType)
   );
-
+ 
   const onInputChange = (
     e: React.ChangeEvent<typeof FormControl & HTMLInputElement>
   ) => {
     const inputValueNumber = Number(e.target.value);
-    if (inputValueNumber >= 0) {
+    if (inputValueNumber > 0) {
       setValue(inputValueNumber);
       setInputValue(undefined);
     } else {
@@ -92,7 +92,7 @@ const SwapInterface = (): JSX.Element => {
       ? setSwapDirection("SellToken")
       : setSwapDirection("BuyToken");
   };
-
+ 
   const onClickSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (address && tokenType && (swapDirection === "BuyToken" || approved)) {
@@ -176,80 +176,97 @@ const SwapInterface = (): JSX.Element => {
     setLoading(false);
   };
 
+  // useDidUpdateAsyncEffect(async () => {
+  //   const tokens: Array<TokenType> = ["Dai", "Link", "Uni"];
+  //   for(let token of tokens){
+  //     updateTokenState({ [token]: { balance: undefined, allowance: undefined } });
+  //   }
+  //   updateBalance(toBN(0));
+
+  //   if (value && tokenType) {
+  //     if(address){
+  //       await reloadTokens([tokenType]);
+  //     }
+  //     const amount = await getAmount(
+  //       tokenType,
+  //       swapDirection,
+  //       value,
+  //       tokensState[tokenType].price
+  //     );
+  //     setAmount(amount);
+
+  //     if (address) {
+  //       let balanceCheck: boolean;
+  //       switch (swapDirection) {
+  //         case "BuyToken":
+  //           balanceCheck = balance.gte(toWei(value)) || false;
+  //           break;
+  //         case "SellToken":
+  //           balanceCheck =
+  //             tokensState[tokenType].balance?.gte(toWei(value)) || false;
+  //           const allowanceCheck =
+  //             tokensState[tokenType].allowance?.gte(toWei(value)) || false;
+  //           setApproved(allowanceCheck);
+  //           break;
+  //       }
+  //       setPayable(balanceCheck);
+  //     }
+  //   } else if (value === 0) {
+  //     setAmount(0);
+  //   }
+
+  // }, [address]);
+
+  // useAsyncEffect(async () => {
+  //   if (value && tokenType) {
+  //     if(!tokensState[tokenType].price || (address && !tokensState[tokenType].balance)){
+  //       await reloadTokens([tokenType]);
+  //     }
+  //     const amount = await getAmount(
+  //       tokenType,
+  //       swapDirection,
+  //       value,
+  //       tokensState[tokenType].price
+  //     );
+  //     setAmount(amount);
+
+  //     if (address) {
+  //       let balanceCheck: boolean;
+  //       switch (swapDirection) {
+  //         case "BuyToken":
+  //           balanceCheck = balance.gte(toWei(value)) || false;
+  //           break;
+  //         case "SellToken":
+  //           balanceCheck =
+  //             tokensState[tokenType].balance?.gte(toWei(value)) || false;
+  //           const allowanceCheck =
+  //             tokensState[tokenType].allowance?.gte(toWei(value)) || false;
+  //           setApproved(allowanceCheck);
+  //           break;
+  //       }
+  //       setPayable(balanceCheck);
+  //     }
+  //   } else if (value === 0) {
+  //     setAmount(0);
+  //   }
+  // }, [value, tokenType]);
+
   useDidUpdateAsyncEffect(async () => {
     const tokens: Array<TokenType> = ["Dai", "Link", "Uni"];
     for(let token of tokens){
       updateTokenState({ [token]: { balance: undefined, allowance: undefined } });
     }
     updateBalance(toBN(0));
-
-    if (value && tokenType) {
-      if(address){
-        await reloadTokens([tokenType]);
-      }
-      const amount = await getAmount(
-        tokenType,
-        swapDirection,
-        value,
-        tokensState[tokenType].price
-      );
-      setAmount(amount);
-
-      if (address) {
-        let balanceCheck: boolean;
-        switch (swapDirection) {
-          case "BuyToken":
-            balanceCheck = balance.gte(toWei(value)) || false;
-            break;
-          case "SellToken":
-            balanceCheck =
-              tokensState[tokenType].balance?.gte(toWei(value)) || false;
-            const allowanceCheck =
-              tokensState[tokenType].allowance?.gte(toWei(value)) || false;
-            setApproved(allowanceCheck);
-            break;
-        }
-        setPayable(balanceCheck);
-      }
-    } else if (value === 0) {
-      setAmount(0);
+    if(address && tokenType){
+      await reloadTokens([tokenType]);
     }
+  },[address]);
 
-  }, [address]);
-
-  useAsyncEffect(async () => {
-    if (value && tokenType) {
-      if(!tokensState[tokenType].price || (address && !tokensState[tokenType].balance)){
-        await reloadTokens([tokenType]);
-      }
-      const amount = await getAmount(
-        tokenType,
-        swapDirection,
-        value,
-        tokensState[tokenType].price
-      );
-      setAmount(amount);
-
-      if (address) {
-        let balanceCheck: boolean;
-        switch (swapDirection) {
-          case "BuyToken":
-            balanceCheck = balance.gte(toWei(value)) || false;
-            break;
-          case "SellToken":
-            balanceCheck =
-              tokensState[tokenType].balance?.gte(toWei(value)) || false;
-            const allowanceCheck =
-              tokensState[tokenType].allowance?.gte(toWei(value)) || false;
-            setApproved(allowanceCheck);
-            break;
-        }
-        setPayable(balanceCheck);
-      }
-    } else if (value === 0) {
-      setAmount(0);
+  useDidUpdateAsyncEffect(async () => {
+    if(tokenType && (!tokensState[tokenType].price || (address && !tokensState[tokenType].balance))){
+      await reloadTokens([tokenType]);
     }
-  }, [value, tokenType]);
+  },[tokenType]);
 
   useDidUpdateAsyncEffect(async () => {
     if(value && tokenType){
@@ -280,7 +297,7 @@ const SwapInterface = (): JSX.Element => {
     } else if (value === 0) {
       setAmount(0);
     }
-  }, [value, tokensState[tokenType!].price]);
+  }, [value, tokensState[tokenType!], balance]);
 
   useEffect(() => {
     if (amount && prevSwapDirection !== swapDirection) {
