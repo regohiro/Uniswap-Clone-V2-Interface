@@ -8,7 +8,7 @@ const store = configureStore({
   reducer: {
     user,
     swap,
-    popup
+    popup,
   },
   middleware: [thunk],
 });

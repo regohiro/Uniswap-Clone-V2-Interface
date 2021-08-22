@@ -1,10 +1,14 @@
-import { updateProvider, updateUserInfo, updateBalance ,setTxHash } from "./actions";
+import {
+  updateProvider,
+  updateUserInfo,
+  updateBalance,
+  setTxHash,
+} from "./actions";
 import { JsonRpcSigner } from "@ethersproject/providers";
 import { createReducer } from "@reduxjs/toolkit";
 import { getDefaultProvider, TProvider } from "../../connectors";
 import { defaultRPCURL } from "../../connectors/network-config";
 import { BigNumber } from "ethers";
-import { toBN } from "../../utils";
 
 const defaultProvider = getDefaultProvider();
 const defaultSigner = defaultProvider.getSigner();

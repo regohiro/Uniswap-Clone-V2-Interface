@@ -1,7 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { BigNumber } from "ethers";
 import { TokenType } from "../../contracts";
-import { toBN } from "../../utils";
 import {
   setAmount,
   setSwapDirection,
@@ -73,20 +72,20 @@ export default createReducer<IState>(initialState, (builder) => {
     .addCase(updateTokenState, (state, { payload }) => {
       let tokensState: Record<TokenType, ITokenState> = state.tokensState;
 
-      Object.entries(payload).forEach(
-        ([key, value]) => {
-          //@ts-ignore
-          const tokenState: ITokenState = tokensState[key];
-          const mergedState: ITokenState = {
-            ...tokenState, ...value
-          }
-          tokensState = {
-            ...tokensState, ... {
-              [key]: mergedState
-            }
-          }
-        }
-      )
+      Object.entries(payload).forEach(([key, value]) => {
+        //@ts-ignore
+        const tokenState: ITokenState = tokensState[key];
+        const mergedState: ITokenState = {
+          ...tokenState,
+          ...value,
+        };
+        tokensState = {
+          ...tokensState,
+          ...{
+            [key]: mergedState,
+          },
+        };
+      });
 
       return {
         ...state,

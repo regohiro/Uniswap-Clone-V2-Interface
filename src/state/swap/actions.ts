@@ -11,6 +11,6 @@ export const setTokenType = createAction<TokenType | undefined>(
 );
 export const setValue = createAction<number>("swap/setValue");
 export const setAmount = createAction<number>("swap/setAmount");
-export const updateTokenState = createAction<usePartialRecord<TokenType, ITokenState>>(
-  "swap/updateTokenState"
-);
+export const updateTokenState = createAction<
+  usePartialRecord<TokenType, ITokenState>
+>("swap/updateTokenState");
