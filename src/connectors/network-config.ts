@@ -1,7 +1,5 @@
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import Authereum from "authereum";
-import Torus from "@toruslabs/torus.js";
 
 export const networkId = 42;
 
@@ -24,25 +22,12 @@ const providerOptions = {
       supportedChainIds: [42]
     },
   },
-  torus: {
-    package: Torus,
-    options: {
-      networkParams: {
-        host: defaultRPCURL,
-        chainId: 42,
-        networkId: 42,
-      },
-    },
-  },
-  authereum: {
-    package: Authereum,
-  },
 };
 
 const getWeb3Modal = () => {
   if (typeof window !== "undefined") {
     return new Web3Modal({
-      cacheProvider: false,
+      cacheProvider: true,
       providerOptions,
       theme: "dark",
     });
