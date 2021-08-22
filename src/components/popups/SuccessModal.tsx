@@ -30,7 +30,7 @@ const SuccessModal = (): JSX.Element => {
       <Alert.Heading>Transaction Confirmed!</Alert.Heading>
       <div>
         {message} <hr/>
-        <a href={`https://kovan.etherscan.io/tx/${txHash}`} target="_blank">
+        <a href={`https://kovan.etherscan.io/tx/${txHash}`} target="_blank" rel="noopener noreferrer">
           <GoLinkExternal size="20"/>
           　View on EtherScan
         </a>
