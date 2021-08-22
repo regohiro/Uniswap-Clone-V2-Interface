@@ -5,45 +5,41 @@ import { Button, Spinner } from "react-bootstrap";
 import styles from "./SwapButton.module.css";
 
 interface IProps {
-  connectPending: boolean;
-  swapPending: boolean;
-  approvePending: boolean;
-  hasEnoughFund: boolean;
+  loading: boolean;
+  payable: boolean;
+  approved: boolean
 }
 
 const SwapButton: React.FC<IProps> = ({
-  connectPending,
-  swapPending,
-  approvePending,
-  hasEnoughFund,
+  loading,
+  payable,
+  approved
 }) => {
   const { address } = useSelector(selectUser);
-  const { swapDirection, value, tokenType, approved } = useSelector(selectSwap);
+  const { swapDirection, value, tokenType } = useSelector(selectSwap);
 
   return (
     <Button
       variant="primary"
       type="submit"
       disabled={
-        connectPending ||
-        swapPending ||
-        approvePending ||
-        (address !== "" && !hasEnoughFund) ||
+        loading ||
+        (address !== "" && !payable) ||
         (address !== "" && value === 0)
       }
       className={styles.btn}
     >
-      {connectPending || swapPending || approvePending ? (
+      {loading ? (
         <Spinner
           as="span"
           animation="border"
           role="status"
           aria-hidden="true"
-        />
+        /> 
       ) : address ? (
         value === 0 ? (
           "Enter an Amount"
-        ) : hasEnoughFund ? (
+        ) : payable ? (
           approved || swapDirection === "BuyToken" ? (
             "Swap"
           ) : (

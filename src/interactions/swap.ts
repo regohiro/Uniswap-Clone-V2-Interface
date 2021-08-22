@@ -12,52 +12,72 @@ import {
 import { TSwapDirection } from "../state/swap/reducers";
 import { fromWei, tenPow18, toWei } from "../utils";
 
-export const getAmount = async (
-  tokenType: TokenType,
-  swapDirection: TSwapDirection,
-  value: number
-): Promise<number> => {
+export const getPrice = async (tokenType: TokenType): Promise<BigNumber> => {
   const provider = getDefaultProvider();
   const dex = await getDexInstance(provider);
   const tokenAddr = getTokenAddr(tokenType);
   const priceBN = await dex.getPrice(tokenAddr);
+  return priceBN;
+};
 
+export const getBalanceAllownace = async (
+  userAddr: string,
+  tokenType: TokenType | "Eth"
+): Promise<{ balance: BigNumber; allowance?: BigNumber }> => {
+  const provider = getDefaultProvider();
+
+  if (tokenType === "Eth") {
+    const balance = await provider.getBalance(userAddr);
+    return { balance };
+  } else {
+    const token = await getTokenInstance(provider, tokenType);
+    const balance = await token.balanceOf(userAddr);
+    const allowance = await token.allowance(userAddr, dexAddr);
+    return { balance, allowance };
+  }
+};
+
+export const getAmount = async (
+  tokenType: TokenType,
+  swapDirection: TSwapDirection,
+  value: number,
+  price?: BigNumber
+): Promise<number> => {
+  if (!price) {
+    price = await getPrice(tokenType);
+  }
   switch (swapDirection) {
     case "BuyToken":
-      return fromWei(toWei(value).mul(tenPow18).div(priceBN));
+      return fromWei(toWei(value).mul(tenPow18).div(price));
     case "SellToken":
-      return fromWei(toWei(value).mul(priceBN).div(tenPow18));
+      return fromWei(toWei(value).mul(price).div(tenPow18));
   }
 };
 
 export const hasEnoughBalance = async (
   userAddr: string,
   tokenType: TokenType | "Eth",
-  amount: number
+  amount: number,
+  userBalance?: BigNumber
 ): Promise<boolean> => {
-  const provider = getDefaultProvider();
   const amountWei = toWei(amount);
-  let userBalance: BigNumber;
-
-  if (tokenType === "Eth") {
-    userBalance = await provider.getBalance(userAddr);
-  } else {
-    const token = await getTokenInstance(provider, tokenType);
-    userBalance = await token.balanceOf(userAddr);
+  if (!userBalance) {
+    userBalance = (await getBalanceAllownace(userAddr, tokenType)).balance;
   }
-  return userBalance.gte(amountWei) ? true : false;
+  return userBalance.gte(amountWei) || false;
 };
 
 export const hasApprovedToken = async (
   userAddr: string,
   tokenType: TokenType,
-  value: number
+  value: number,
+  approvedAmount?: BigNumber
 ): Promise<boolean> => {
-  const provider = getDefaultProvider();
-  const token = await getTokenInstance(provider, tokenType);
   const valueWei = toWei(value);
-  const tokenAllowance = await token.allowance(userAddr, dexAddr);
-  return tokenAllowance.gte(valueWei) ? true : false;
+  if (!approvedAmount) {
+    approvedAmount = (await getBalanceAllownace(userAddr, tokenType)).allowance;
+  }
+  return approvedAmount?.gte(valueWei) || false;
 };
 
 export const approveToken = async (
@@ -85,6 +105,22 @@ export const swapToken = async (
   const valueWei = toWei(value);
   const dex = await getDexInstance(signer);
   const tokenAddr = getTokenAddr(tokenType);
+  const userAddr = await signer.getAddress();
+
+  let check: boolean;
+  switch (swapDirection) {
+    case "BuyToken":
+      check = await hasEnoughBalance(userAddr, "Eth", value);
+      break;
+    case "SellToken":
+      check =
+        (await hasEnoughBalance(userAddr, tokenType, value)) &&
+        (await hasApprovedToken(userAddr, tokenType, value));
+      break;
+  }
+  if (check === false) {
+    throw new Error("Insufficient fund or has not approved token!");
+  }
 
   try {
     let swapTx: ContractTransaction;
@@ -97,7 +133,7 @@ export const swapToken = async (
         break;
     }
     const { transactionHash: txHash } = await swapTx.wait();
-    
+
     return txHash;
   } catch (error: any) {
     throw new Error(error.message);

@@ -1,6 +1,7 @@
 import { TProvider } from "./../../connectors";
 import { JsonRpcSigner } from "@ethersproject/providers";
 import { createAction } from "@reduxjs/toolkit";
+import { BigNumber } from "ethers";
 
 export const updateProvider = createAction<{
   host: any;
@@ -12,4 +13,7 @@ export const updateUserInfo = createAction<{
   address: string;
 }>("user/updateUserInfo");
 
+export const updateBalance = createAction<BigNumber | undefined>(
+  "user/updateBalance"
+);
 export const setTxHash = createAction<string>("user/setTxHash");

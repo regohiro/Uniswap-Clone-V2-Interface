@@ -2,8 +2,14 @@ import styles from "./SwapInterface.module.css";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectSwap } from "../../state";
+import { AiOutlineReload } from "react-icons/ai";
+import { TokenType } from "../../contracts";
 
-const RateBox = (): JSX.Element => {
+interface IProps {
+  onClickReload: (tokens: Array<TokenType>) => Promise<void>;
+}
+
+const RateBox: React.FC<IProps> = ({ onClickReload }) => {
   const { swapDirection, value, amount, tokenType } = useSelector(selectSwap);
 
   const [fromTokenName, setFromTokenName] = useState<string>("ETH");
@@ -34,9 +40,17 @@ const RateBox = (): JSX.Element => {
     <div className={styles.rateBox}>
       <span className={styles.rateText}>Exchange Rate</span>
       {show && (
-        <span className={styles.rateValue}>
-          1 {fromTokenName} = {rate} {toTokenName}
-        </span>
+        <>
+          <span>
+            <AiOutlineReload
+              className={styles.reloadBtn}
+              onClick={async () => tokenType && await onClickReload([tokenType])}
+            />
+          </span>
+          <span className={styles.rateValue}>
+            1 {fromTokenName} = {rate} {toTokenName}
+          </span>
+        </>
       )}
     </div>
   );

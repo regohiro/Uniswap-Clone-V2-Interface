@@ -114,6 +114,17 @@
   float: right;
 }
 
+.reloadBtn {
+  margin-left: 10px;
+  margin-bottom: 3px;
+  font-size: 18px;
+}
+
+.reloadBtn:hover{
+  cursor: pointer;
+  transform: scale(1.1);
+}
+
 .ethLogo {
   margin-left: 10px;
 }

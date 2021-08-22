@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, FormControl, InputGroup } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
-import useAsyncEffect from "use-async-effect";
 import { selectSwap, selectUser } from "../../state";
 import * as swapActions from "../../state/swap/actions";
 import * as userActions from "../../state/user/actions";
@@ -13,30 +12,32 @@ import TokenDropdown from "./TokenDropdown";
 import {
   approveToken,
   getAmount,
-  hasApprovedToken,
-  hasEnoughBalance,
+  getBalanceAllownace,
+  getPrice,
   swapToken,
 } from "../../interactions/swap";
-import { useAsync, usePrevious } from "../../hooks";
+import { useAsync, usePrevious, useDidUpdateAsyncEffect } from "../../hooks";
 import { connectWallet } from "../../interactions/connectwallet";
 import { JsonRpcSigner } from "@ethersproject/providers";
 import { TokenType } from "../../contracts";
 import { TSwapDirection } from "../../state/swap/reducers";
 import SwapButton from "../SwapButton";
 import RateBox from "./RateBox";
+import { toWei } from "../../utils";
 
 const SwapInterface = (): JSX.Element => {
-  const { address, signer } = useSelector(selectUser);
-  const { swapDirection, value, amount, tokenType, approved } =
+  const { address, signer, balance } = useSelector(selectUser);
+  const { swapDirection, value, amount, tokenType, tokensState } =
     useSelector(selectSwap);
   const {
     setSwapDirection,
     setValue,
     setAmount,
-    setApproved,
     setTxHash,
+    updateTokenState,
     updateProvider,
     updateUserInfo,
+    updateBalance,
     setAlertModal,
     setSuccessModal,
   } = bindActionCreators(
@@ -44,8 +45,12 @@ const SwapInterface = (): JSX.Element => {
     useDispatch()
   );
 
-  const [hasEnoughFund, setHasEnoughFund] = useState<boolean>(false);
-  const [inputValue, setInputValue] = useState<number | undefined>(value || undefined);
+  const [payable, setPayable] = useState<boolean>(false);
+  const [approved, setApproved] = useState<boolean>(false);
+  const [inputValue, setInputValue] = useState<string | undefined>(
+    value ? value.toString() : undefined
+  );
+  const [loading, setLoading] = useState<boolean>(false);
   const prevSwapDirection = usePrevious<TSwapDirection>(swapDirection);
 
   interface ISwapTokenParam {
@@ -70,11 +75,11 @@ const SwapInterface = (): JSX.Element => {
 
   const onInputChange = (
     e: React.ChangeEvent<typeof FormControl & HTMLInputElement>
-  ) => {
+  ): void => {
     const inputValueNumber = Number(e.target.value);
-    if (inputValueNumber >= 0) {
+    if (inputValueNumber >= 0 && e.target.value) {
       setValue(inputValueNumber);
-      setInputValue(undefined);
+      setInputValue((e.target.value).toString());
     } else {
       setValue(0);
       setInputValue(undefined);
@@ -87,7 +92,7 @@ const SwapInterface = (): JSX.Element => {
       : setSwapDirection("BuyToken");
   };
 
-  const onClickSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onClickSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     if (address && tokenType && (swapDirection === "BuyToken" || approved)) {
       const { error, data } = await swapPromi.call({
@@ -110,6 +115,7 @@ const SwapInterface = (): JSX.Element => {
           txHash: data,
           message: "Swap Successful",
         });
+        await reloadTokens([tokenType]);
       }
     } else if (
       address &&
@@ -154,49 +160,87 @@ const SwapInterface = (): JSX.Element => {
     }
   };
 
-  useEffect(() => {
-    if (amount && prevSwapDirection !== swapDirection) {
-      setInputValue(amount);
-      setValue(amount);
-      setAmount(value);
-    }  
-  }, [swapDirection]);
+  const reloadTokens = async (tokens: Array<TokenType>): Promise<void> => {
+    setLoading(true);
+    for (let token of tokens) {
+      const price = await getPrice(token);
+      updateTokenState({ [token]: { price } });
+      if (address) {
+        const { balance, allowance } = await getBalanceAllownace(
+          address,
+          token
+        );
+        updateTokenState({ [token]: { balance, allowance } });
+      }
+    }
+    if (address) {
+      const { balance } = await getBalanceAllownace(address, "Eth");
+      updateBalance(balance);
+    }
+    setLoading(false);
+  };
 
-  useAsyncEffect(async () => {
+  useDidUpdateAsyncEffect(async () => {
+    const tokens: Array<TokenType> = ["Dai", "Link", "Uni"];
+    for (let token of tokens) {
+      updateTokenState({
+        [token]: { balance: undefined, allowance: undefined },
+      });
+    }
+    updateBalance(undefined);
+    if (address && tokenType) {
+      await reloadTokens([tokenType]);
+    }
+  }, [address]);
+
+  useDidUpdateAsyncEffect(async () => {
+    if (
+      tokenType &&
+      (!tokensState[tokenType].price ||
+        (address && !tokensState[tokenType].balance))
+    ) {
+      await reloadTokens([tokenType]);
+    }
+  }, [tokenType]);
+
+  useDidUpdateAsyncEffect(async () => {
     if (value && tokenType) {
-      setHasEnoughFund(false);
-
-      const amount = await getAmount(tokenType, swapDirection, value);
+      const amount = await getAmount(
+        tokenType,
+        swapDirection,
+        value,
+        tokensState[tokenType].price
+      );
       setAmount(amount);
 
-      if (address) {
-        let tokenToCheck: TokenType | "Eth";
+      if (address && balance) {
+        let balanceCheck: boolean;
         switch (swapDirection) {
           case "BuyToken":
-            tokenToCheck = "Eth";
+            balanceCheck = balance.gte(toWei(value)) || false;
             break;
           case "SellToken":
-            tokenToCheck = tokenType;
-            const allowanceCheckResult = await hasApprovedToken(
-              address,
-              tokenToCheck,
-              value
-            );
-            setApproved(allowanceCheckResult);
+            balanceCheck =
+              tokensState[tokenType].balance?.gte(toWei(value)) || false;
+            const allowanceCheck =
+              tokensState[tokenType].allowance?.gte(toWei(value)) || false;
+            setApproved(allowanceCheck);
             break;
         }
-
-        const balanceCheckResult = await hasEnoughBalance(
-          address,
-          tokenToCheck,
-          value
-        );
-        setHasEnoughFund(balanceCheckResult);
+        setPayable(balanceCheck);
       }
     } else if (value === 0) {
       setAmount(0);
     }
-  }, [value, tokenType, address]);
+  }, [value, tokensState[tokenType!], balance]);
+
+  useEffect(() => {
+    if (amount && prevSwapDirection !== swapDirection) {
+      setInputValue(amount.toString());
+      setValue(amount);
+      setAmount(value);
+    }
+  }, [swapDirection]);
 
   return (
     <main className={styles.main}>
@@ -205,15 +249,20 @@ const SwapInterface = (): JSX.Element => {
           <Form.Control
             className={styles.formControl}
             id={styles.topFormControl}
-            type="tel"
+            inputMode="decimal"
+            type="number"
             min="0"
             placeholder="0.00"
             step="any"
-            onChange={onInputChange}
-            value={inputValue}
-            required={address ? true : false}
             autoComplete="off"
             autoCorrect="off"
+            onChange={onInputChange}
+            onWheel={(e) => {
+              //@ts-ignore
+              e.target.blur();
+            }}
+            value={inputValue || ""}
+            required={address ? true : false}
           />
           {swapDirection === "BuyToken" ? <EthDropdown /> : <TokenDropdown />}
         </InputGroup>
@@ -231,12 +280,16 @@ const SwapInterface = (): JSX.Element => {
           />
           {swapDirection === "BuyToken" ? <TokenDropdown /> : <EthDropdown />}
         </InputGroup>
-        <RateBox />
+        <RateBox onClickReload={reloadTokens} />
         <SwapButton
-          connectPending={connectPromi.pending}
-          swapPending={swapPromi.pending}
-          approvePending={approvePromi.pending}
-          hasEnoughFund={hasEnoughFund}
+          loading={
+            loading ||
+            connectPromi.pending ||
+            swapPromi.pending ||
+            approvePromi.pending
+          }
+          payable={payable}
+          approved={approved}
         />
       </Form>
     </main>

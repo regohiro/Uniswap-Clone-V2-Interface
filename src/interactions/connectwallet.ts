@@ -28,7 +28,7 @@ const addNetwork = async (id: number): Promise<void> => {
   }
 };
 
-export const connectWallet = async (): Promise<IState> => {
+export const connectWallet = async () => {
   //@ts-ignore
   let host = await web3Modal.connect();
   let provider = getProvider(host);
@@ -53,7 +53,6 @@ export const connectWallet = async (): Promise<IState> => {
     provider,
     signer,
     address,
-    txHash: "",
   };
 };
 
