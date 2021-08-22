@@ -79,7 +79,7 @@ const SwapInterface = (): JSX.Element => {
     const inputValueNumber = Number(e.target.value);
     if (inputValueNumber >= 0 && e.target.value) {
       setValue(inputValueNumber);
-      setInputValue(inputValueNumber.toString());
+      setInputValue((e.target.value).toString());
     } else {
       setValue(0);
       setInputValue(undefined);
