@@ -79,7 +79,7 @@ const SwapInterface = (): JSX.Element => {
     const inputValueNumber = Number(e.target.value);
     if (inputValueNumber >= 0 && e.target.value) {
       setValue(inputValueNumber);
-      setInputValue((e.target.value).toString());
+      setInputValue(e.target.value.toString());
     } else {
       setValue(0);
       setInputValue(undefined);
@@ -92,7 +92,9 @@ const SwapInterface = (): JSX.Element => {
       : setSwapDirection("BuyToken");
   };
 
-  const onClickSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  const onClickSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
     if (address && tokenType && (swapDirection === "BuyToken" || approved)) {
       const { error, data } = await swapPromi.call({
@@ -257,10 +259,7 @@ const SwapInterface = (): JSX.Element => {
             autoComplete="off"
             autoCorrect="off"
             onChange={onInputChange}
-            onWheel={(e) => {
-              //@ts-ignore
-              e.target.blur();
-            }}
+            onWheel={(e: any) => e.target.blur()}
             value={inputValue || ""}
             required={address ? true : false}
           />
