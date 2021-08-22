@@ -7,7 +7,7 @@ import { TokenType } from "../../contracts";
 
 interface IProps {
   onClickReload: (tokens: Array<TokenType>) => Promise<void>;
-}
+} 
 
 const RateBox: React.FC<IProps> = ({ onClickReload }) => {
   const { swapDirection, value, amount, tokenType } = useSelector(selectSwap);
